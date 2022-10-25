@@ -3,6 +3,7 @@ import random
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
+
 class Processor:
 
     def __init__(self) -> None:
@@ -29,7 +30,7 @@ class Processor:
         :return:
         """
         if parser is None:
-            text = Processor._default_parser(file_name, self.load_stop_words())
+            text = Processor._default_parser(file_name)
         else:
             text = parser(file_name, self.load_stop_words())
 
@@ -44,14 +45,12 @@ class Processor:
         else:
             return [' the ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'for', ' i ']
 
-    
     def wordcount_sankey(self, word_list=None, k=5, **kwargs):
         # Process **kwargs
         pad = kwargs.get('pad', 50)  # get - grabs dict value if it exists, otherwise returns defined value
         thickness = kwargs.get('thickness', 30)
         line_color = kwargs.get('line_color', 'black')
         line_width = kwargs.get('line_width', 1)
-
 
         for key, value in self.data['wordcount'].items():
             targ_list = []
@@ -64,7 +63,9 @@ class Processor:
             link = {'source': [key]*len(self.data['wordcount'][key]),
                                     'target': targ_list,
                                     'value': val_list}
-            node = {'label': key, 'pad': pad, 'thickness': thickness, 'line': {'color': line_color, 'width': line_width}}
+            print(link)
+            node = {'label': None, 'pad': pad, 'thickness': thickness, 'line': {'color': line_color, 'width': line_width}}
+            print(node)
             sankey: go.Sankey = go.Sankey(link=link, node=node)
             fig: go.Figure = go.Figure(sankey)
             # fig.update_layout(title_text=f'{self.src} vs {self.targ}')
@@ -75,7 +76,7 @@ class Processor:
         """
         num_words = self.data['numwords']
         for label, nw in num_words.items():
-            plt.bar(label ,nw)
+            plt.bar(label, nw)
         plt.show()
 
     

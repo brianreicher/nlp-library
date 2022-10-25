@@ -3,8 +3,8 @@ from collections import Counter, defaultdict
 import PyPDF2
 import pprint as pp
 
+
 class Parser():
-# CAN TOTALLY IMPLEMENT WITH SOME ABSTRACTION
     def __init__(self) -> None:
         pass
 
@@ -64,7 +64,6 @@ class Parser():
         text = text.replace(':', ' ')
 
         text = text.replace('  ', ' ')
-
 
         words = text.split(' ')
         wc = Counter(words)
