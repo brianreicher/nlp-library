@@ -1,22 +1,21 @@
 import json
-from collections import Counter, defaultdict
+from collections import Counter
 import PyPDF2
-import pprint as pp
-
+import re
 
 class Parser():
     def __init__(self) -> None:
         pass
 
     @staticmethod
-    def json_parser(filename):
-        f =  open(filename)
+    def json_parser(filename, stopwords=[]):
+        f = open(filename)
         raw = json.load(f)
         text = raw['text']
         words = text.split(" ")
         wc = Counter(words)
         num = len(words)
-        return {'wordcount':wc, 'numwords':num}
+        return {'wordcount': wc, 'numwords': num, 'fulltext': text}
 
     @staticmethod
     def pdf_parser(filename, stopwords=[]):
@@ -38,34 +37,20 @@ class Parser():
         
             num += len(page_split)
             text.append(page_split)
-        
-        # base_stopwords = {"' ": '', ', ': ' ', '[': '', ']': '', '  ': ' ', '-': ''}
-        # for key, val in range(len(base_stopwords)):
-        #     stopwords[key]=base_stopwords[key].value
-        # print(stopwords)
-
+            
         text = ' '.join(str(e) for e in text)
-        text = text.lower()
-        for sw in stopwords:
-            text = text.replace(sw, '')
-        text = text.replace("\'", "")
-        text = text.replace(", ", ' ')
-        text = text.replace(",", ' ')
-        text = text.replace('[', ' ')
-        text = text.replace(']', ' ')  # TODO CLEAN
-        text = text.replace('-', ' ')
-        text = text.replace("-,", ' ')
-        text = text.replace('(', ' ')
-        text = text.replace(')', ' ')
-        text = text.replace('\"', ' ')
-        text = text.replace('.', ' ')
-        text = text.replace('\n-', ' ')
-        text = text.replace('/', ' ')
-        text = text.replace(':', ' ')
+        text.lower()
+        text = re.sub(r'\b[A-Z]+\b', '', text)
+        text = re.sub("[^\w\s]", '', text)
 
-        text = text.replace('  ', ' ')
 
-        words = text.split(' ')
+        words =text.split(' ')
+
+        for word in range(0, len(words)):
+            print(words[word])
+            if words[word].lower() in stopwords:
+                words[word] = ''
+        words = words[1:]
         wc = Counter(words)
 
-        return {'wordcount': wc, 'numwords': num}
+        return {'wordcount': wc, 'numwords': num, 'fulltext': text}
